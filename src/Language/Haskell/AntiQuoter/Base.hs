@@ -27,7 +27,7 @@ type AntiQuoterPass e q = e -> Maybe (Q q)
 -- | An `AntiQuoter` is the combination of several `AntiQuoterPass`es, trying
 -- each of them in order until one passes.
 newtype AntiQuoter q = AQ
-    { antiQuote :: forall e. Data e => AntiQuoterPass e q }
+    { antiQuote :: forall e. Typeable e => AntiQuoterPass e q }
 
 -- | Combining `AntiQuoter`s using `mappend` is left biased.
 instance Monoid (AntiQuoter q) where
