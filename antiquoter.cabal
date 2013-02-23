@@ -1,6 +1,6 @@
 name:                antiquoter
 version:             0.1.0.0
-synopsis:            Combinator library for working with quasiquoters and constructing antiquoters.
+synopsis:            Combinator library for quasi- and anti-quoting
 -- description:
 
 license:             BSD3
