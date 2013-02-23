@@ -10,6 +10,7 @@ module Language.Haskell.AntiQuoter.Base(
     EPAntiQuoter,
     -- * Template syntax class
     EP(..),
+    epPass, epPass', epPass'', epDiffer,
 ) where
 
 import Control.Monad
@@ -34,8 +35,6 @@ instance Monoid (AntiQuoter q) where
     mempty = AQ $ const Nothing
     (AQ f) `mappend` (AQ g) = AQ $ \e -> f e `mplus` g e
 
--- | An `AntiQuoter` that works for `Exp` and `Pat`s.
-type EPAntiQuoter = forall q. EP q => AntiQuoter q
 
 -- | Create an `AntiQuoter` from an single pass.
 fromPass :: Typeable e => AntiQuoterPass e q -> AntiQuoter q
@@ -73,6 +72,31 @@ mkEPQuasiQuoter :: Data a
     -> QuasiQuoter
 mkEPQuasiQuoter parse aq = mkQuasiQuoter parse (aq, aq)
 
+-- | An `AntiQuoter` that works for `Exp` and `Pat`s.
+type EPAntiQuoter       = forall q. EP q => AntiQuoter q
+type EPAntiQuoterPass e = forall q. EP q => AntiQuoterPass e q
+
+epPass :: Typeable e => (e -> Maybe (Q Exp)) -> (e -> Maybe (Q Pat))
+    -> EPAntiQuoterPass e
+epPass pe pp = \e -> unAQR . fromEPV $ EPV (AQR $ pe e) (AQR $ pp e)
+
+epPass' :: Typeable e => (e -> Maybe (Q Exp, Q Pat)) -> EPAntiQuoterPass e
+epPass' f = epPass (fmap fst . f) (fmap snd . f)
+
+epPass'' :: Typeable e => (e -> Maybe (Q (Exp, Pat))) -> EPAntiQuoterPass e
+epPass'' f = epPass ((fmap $ fmap fst) . f) ((fmap $ fmap snd) . f)
+
+epDiffer :: EP q => Q Exp -> Q Pat -> Q q
+epDiffer e p = fromEPV $ EPV e p
+
+-- | The result of a transformation.
+newtype AQResult q = AQR { unAQR :: (Maybe (Q q)) }
+
+data EPV f = EPV
+    { eep :: f Exp
+    , pep :: f Pat
+    }
+
 -- | Typeclass with the common constructors of `Exp` and `Pat`, usefull for
 -- building `EPAntiQuoter`s.
 class EP q where
@@ -81,6 +105,7 @@ class EP q where
     lit     :: Lit -> q
     tup     :: [q] -> q
     list    :: [q] -> q
+    fromEPV :: EPV f -> f q
 
 instance EP Exp where
     var     = VarE
@@ -88,9 +113,11 @@ instance EP Exp where
     lit     = LitE
     tup     = TupE
     list    = ListE
+    fromEPV = eep
 instance EP Pat where
     var     = VarP
     con     = ConP
     lit     = LitP
     tup     = TupP
     list    = ListP
+    fromEPV = pep
