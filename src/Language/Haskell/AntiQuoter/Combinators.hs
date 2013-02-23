@@ -1,3 +1,4 @@
+-- | Several combinators for `AntiQuoters`.
 module Language.Haskell.AntiQuoter.Combinators(
     -- * Lifted constructors.
     varQ, conQ, litQ, tupQ, listQ,

@@ -1,5 +1,7 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE RankNTypes #-}
+-- | Base module for `AntiQuoter`s, which transform parsed syntax into
+-- template-haskell syntax to make `QuasiQuoter`s.
 module Language.Haskell.AntiQuoter.Base(
     -- * AntiQuoters
     AntiQuoterPass,

@@ -1,8 +1,10 @@
+-- | Tools for writing one `AntiQuoter` which can be used for both expressions
+-- and patterns, thereby reducing copy-paste programming.
 {-# LANGUAGE RankNTypes #-}
 module Language.Haskell.AntiQuoter.ExpPat (
 
     -- * Template syntax class
-    EP(..),
+    EP(..), EPAntiQuoter, EPAntiQuoterPass,
     mkEPQuasiQuoter,
     epPass, epPass', epPass'', epDiffer,
 
@@ -27,11 +29,16 @@ data EPV f = EPV
 -- | Typeclass with the common constructors of `Exp` and `Pat`, usefull for
 -- building `EPAntiQuoter`s.
 class EP q where
-    var     :: Name -> q        -- ^ Variable
-    con     :: Name -> [q] -> q -- ^ Constructor with arguments
-    lit     :: Lit -> q         -- ^ Literal value
-    tup     :: [q] -> q         -- ^ Tuple
-    list    :: [q] -> q         -- ^ List
+    -- | Variable
+    var     :: Name -> q
+    -- | Constructor with arguments
+    con     :: Name -> [q] -> q
+    -- | Literal value
+    lit     :: Lit -> q
+    -- | Tuple
+    tup     :: [q] -> q
+    -- | List
+    list    :: [q] -> q
     -- | Internal unwrapper when the implementation for `Exp` and `Pat` should
     -- differ.
     fromEPV :: EPV f -> f q
