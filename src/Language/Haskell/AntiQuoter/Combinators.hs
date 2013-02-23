@@ -6,9 +6,10 @@ module Language.Haskell.AntiQuoter.Combinators(
     splice,
 ) where
 
-import Language.Haskell.AntiQuoter.Base
 
 import Language.Haskell.TH
+
+import Language.Haskell.AntiQuoter.ExpPat
 
 varQ :: EP q => Name -> Q q
 varQ = return . var

@@ -22,6 +22,7 @@ library
     Language.Haskell.AntiQuoter
     Language.Haskell.AntiQuoter.Base
     Language.Haskell.AntiQuoter.Combinators
+    Language.Haskell.AntiQuoter.ExpPat
   other-modules:
   build-depends:
     base >=4 && <5,
