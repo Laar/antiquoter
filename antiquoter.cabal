@@ -19,7 +19,9 @@ cabal-version:       >=1.8
 
 library
   exposed-modules:
-    Language.Haskell.Antiquoter
+    Language.Haskell.AntiQuoter
+    Language.Haskell.AntiQuoter.Base
+    Language.Haskell.AntiQuoter.Combinators
   other-modules:
   build-depends:
     base >=4 && <5,
