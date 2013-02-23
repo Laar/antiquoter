@@ -3,7 +3,7 @@ module Language.Haskell.AntiQuoter.Combinators(
     varQ, conQ, litQ, tupQ, listQ,
 
     -- * Unsorted
-    splice,
+    splice, wild,
 ) where
 
 
@@ -27,3 +27,19 @@ listQ = fmap list . sequence
 -- | Uses/Binds a variable of the given name.
 splice :: EP q => String -> Q q
 splice =  varQ . mkName
+
+-- | Use a wildcard in pattern context and the given expression in expression
+-- contexts. Consider for example the folowing constructor
+--
+-- > EX SrcLoc OtherType
+--
+-- When pattern matching the pattern should look like @EX _ x@, using a
+-- wildcard for the source location. On the other hand making an expression
+-- should use some result say resulting in @EX someSrcLoc x@. With the `wild`
+-- function this general quoter can be written as
+--
+-- > con ''EX [wild someSrcLoc', splice "x"]
+--
+-- Assuming that @someSrcLoc' :: ExpQ@ and that its result is of type @SrcLoc@.
+wild :: EP q => Q Exp -> Q q
+wild e = epDiffer e wildP
