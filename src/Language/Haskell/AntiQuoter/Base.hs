@@ -50,7 +50,8 @@ fromPass aqp = AQ $ mkQ Nothing aqp
 -- is tried if the current quoter fails.
 (<<>) :: Typeable e => AntiQuoter q -> AntiQuoterPass e q -> AntiQuoter q
 aq <<> aqp = aq `mappend` fromPass aqp
--- | As `<>>` but first trying the pass and if it fails try the quoter.
+-- | Like `<>>` with flipped arguments, but also trying the extra pass before
+-- the quoter.
 (<>>) :: Typeable e => AntiQuoterPass e q -> AntiQuoter q -> AntiQuoter q
 aqp <>> aq = fromPass aqp `mappend` aq
 
