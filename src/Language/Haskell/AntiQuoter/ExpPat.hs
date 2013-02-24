@@ -65,7 +65,7 @@ epPass' :: Typeable e => (e -> Maybe (Q Exp, Q Pat)) -> EPAntiQuoterPass e
 epPass' f = epPass (fmap fst . f) (fmap snd . f)
 
 -- | See `epPass`.
-epPass'' :: Typeable e => (e -> Maybe (Q (Exp, Pat))) -> EPAntiQuoterPass e
+epPass'' :: Typeable e => AntiQuoterPass e (Exp, Pat) -> EPAntiQuoterPass e
 epPass'' f = epPass ((fmap $ fmap fst) . f) ((fmap $ fmap snd) . f)
 
 -- | Combine two results, an `Exp` and a `Pat` into a context dependent choice.
