@@ -58,7 +58,7 @@ type EPAntiQuoterPass e = forall q. EP q => AntiQuoterPass e q
 -- pattern context, into a single pass for an expression of patter context.
 epPass :: Typeable e => AntiQuoterPass e Exp -> AntiQuoterPass e Pat
     -> EPAntiQuoterPass e
-epPass pe pp = \e -> unAQR . fromEPV $ EPV (AQR $ pe e) (AQR $ pp e)
+epPass pe pp = \e -> unAQRW . fromEPV $ EPV (AQRW $ pe e) (AQRW $ pp e)
 
 -- | See `epPass`.
 epPass' :: Typeable e => (e -> Maybe (Q Exp, Q Pat)) -> EPAntiQuoterPass e

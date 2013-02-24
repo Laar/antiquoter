@@ -7,9 +7,10 @@ module Language.Haskell.AntiQuoter.Base(
     AntiQuoterPass,
     AntiQuoter,
     mkQuasiQuoter,
+    AQResult(..),
     fromPass, (<<>), (<>>),
     -- ** Internals
-    AQResult(..),
+    WrappedAQResult(..),
 ) where
 
 import Control.Monad
@@ -21,8 +22,11 @@ import Language.Haskell.TH.Quote
 infixl 1 <<>
 infixr 2 <>>
 
--- | Wrapper for the result of an `AntiQuoterPass`, for internal use.
-newtype AQResult q = AQR { unAQR :: (Maybe (Q q)) }
+-- | Result of an `AntiQuoterPass`
+type AQResult q = Maybe (Q q)
+
+-- | Wrapper for `AQResult`, needed for the typechecker.
+newtype WrappedAQResult q = AQRW { unAQRW :: AQResult q }
 
 -- | A single quotation pass possibly transforming an @e@ into a @q@.
 type AntiQuoterPass e q = e -> Maybe (Q q)
