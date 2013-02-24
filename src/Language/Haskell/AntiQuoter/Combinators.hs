@@ -5,7 +5,7 @@ module Language.Haskell.AntiQuoter.Combinators(
     varQ, conQ, litQ, tupQ, listQ,
 
     -- * Ignoring
-    ignore, ignorePat, ignoreExp,
+    ignore, ignorePat, onlyExp, ignoreExp, onlyPat,
     -- * Unsorted
     splice, wild,
 ) where
@@ -53,9 +53,13 @@ ignore :: AQResult q
 ignore = Nothing
 
 -- | Yielding only a result for expressions and ignoring in patterns.
-ignorePat :: EP q => AQResult Exp -> AQResult q
+ignorePat, onlyExp :: EP q => AQResult Exp -> AQResult q
 ignorePat e = epResult e ignore
+-- | Alias for `ignorePat`.
+onlyExp = ignorePat
 
 -- | Yielding only a result for patterns and ignoring in expressions.
-ignoreExp :: EP q => AQResult Pat -> AQResult q
+ignoreExp, onlyPat :: EP q => AQResult Pat -> AQResult q
 ignoreExp = epResult ignore
+-- | Alias for `ignoreExp`.
+onlyPat = ignoreExp
