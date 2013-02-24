@@ -10,7 +10,6 @@ module Language.Haskell.AntiQuoter.Combinators(
     splice, wild,
 ) where
 
-import Data.Typeable
 import Language.Haskell.TH
 
 import Language.Haskell.AntiQuoter.Base
@@ -49,14 +48,14 @@ splice =  varQ . mkName
 wild :: EP q => Q Exp -> Q q
 wild e = epValue e wildP
 
--- | An `AntiQuoterPass` that ignores the input an does nothing at all.
-ignore :: AntiQuoterPass e q
-ignore = const Nothing
+-- | An results that does not output anything.
+ignore :: AQResult q
+ignore = Nothing
 
--- | Construct an `EPAntiQuoterPass` that only transforms expressions.
-ignorePat :: Typeable e => AntiQuoterPass e Exp -> EPAntiQuoterPass e
-ignorePat e = epPass e ignore
+-- | Yielding only a result for expressions and ignoring in patterns.
+ignorePat :: EP q => AQResult Exp -> AQResult q
+ignorePat e = epResult e ignore
 
--- | Construct an `EPAntiQuoterPass` that only transforms patterns.
-ignoreExp :: Typeable e => AntiQuoterPass e Pat -> EPAntiQuoterPass e
-ignoreExp = epPass ignore
+-- | Yielding only a result for patterns and ignoring in expressions.
+ignoreExp :: EP q => AQResult Pat -> AQResult q
+ignoreExp = epResult ignore
