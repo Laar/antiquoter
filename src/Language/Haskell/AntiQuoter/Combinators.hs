@@ -1,15 +1,19 @@
+{-# LANGUAGE RankNTypes #-}
 -- | Several combinators for `AntiQuoters`.
 module Language.Haskell.AntiQuoter.Combinators(
     -- * Lifted constructors.
     varQ, conQ, litQ, tupQ, listQ,
 
+    -- * Ignoring
+    ignore, ignorePat, ignoreExp,
     -- * Unsorted
     splice, wild,
 ) where
 
-
+import Data.Typeable
 import Language.Haskell.TH
 
+import Language.Haskell.AntiQuoter.Base
 import Language.Haskell.AntiQuoter.ExpPat
 
 varQ :: EP q => Name -> Q q
@@ -43,4 +47,16 @@ splice =  varQ . mkName
 --
 -- Assuming that @someSrcLoc' :: ExpQ@ and that its result is of type @SrcLoc@.
 wild :: EP q => Q Exp -> Q q
-wild e = epDiffer e wildP
+wild e = epValue e wildP
+
+-- | An `AntiQuoterPass` that ignores the input an does nothing at all.
+ignore :: AntiQuoterPass e q
+ignore = const Nothing
+
+-- | Construct an `EPAntiQuoterPass` that only transforms expressions.
+ignorePat :: Typeable e => AntiQuoterPass e Exp -> EPAntiQuoterPass e
+ignorePat e = epPass e ignore
+
+-- | Construct an `EPAntiQuoterPass` that only transforms patterns.
+ignoreExp :: Typeable e => AntiQuoterPass e Pat -> EPAntiQuoterPass e
+ignoreExp = epPass ignore

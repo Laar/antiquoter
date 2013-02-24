@@ -6,7 +6,8 @@ module Language.Haskell.AntiQuoter.ExpPat (
     -- * Template syntax class
     EP(..), EPAntiQuoter, EPAntiQuoterPass,
     mkEPQuasiQuoter,
-    epPass, epPass', epPass'', epDiffer,
+    epPass, epPass', epPass'',
+    epResult, epValue,
 
     -- ** Internal
     EPV(..),
@@ -58,7 +59,7 @@ type EPAntiQuoterPass e = forall q. EP q => AntiQuoterPass e q
 -- pattern context, into a single pass for an expression of patter context.
 epPass :: Typeable e => AntiQuoterPass e Exp -> AntiQuoterPass e Pat
     -> EPAntiQuoterPass e
-epPass pe pp = \e -> unAQRW . fromEPV $ EPV (AQRW $ pe e) (AQRW $ pp e)
+epPass pe pp = \e -> epResult (pe e) (pp e)
 
 -- | See `epPass`.
 epPass' :: Typeable e => (e -> Maybe (Q Exp, Q Pat)) -> EPAntiQuoterPass e
@@ -68,9 +69,13 @@ epPass' f = epPass (fmap fst . f) (fmap snd . f)
 epPass'' :: Typeable e => AntiQuoterPass e (Exp, Pat) -> EPAntiQuoterPass e
 epPass'' f = epPass ((fmap $ fmap fst) . f) ((fmap $ fmap snd) . f)
 
--- | Combine two results, an `Exp` and a `Pat` into a context dependent choice.
-epDiffer :: EP q => Q Exp -> Q Pat -> Q q
-epDiffer e p = fromEPV $ EPV e p
+-- | Make a context dependent result for expression and pattern contexts.
+epResult :: EP q => AQResult Exp -> AQResult Pat -> AQResult q
+epResult e p = unAQRW . fromEPV $ EPV (AQRW e) (AQRW p)
+
+-- | Make an context dependent value for expression and pattern contexts.
+epValue :: EP q => Q Exp -> Q Pat -> Q q
+epValue e p = fromEPV $ EPV e p
 
 instance EP Exp where
     var     = VarE
