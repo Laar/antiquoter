@@ -7,7 +7,7 @@ module Language.Haskell.AntiQuoter.Base(
     AntiQuoterPass,
     AntiQuoter,
     mkQuasiQuoter,
-    AQResult(..),
+    AQResult,
     fromPass, (<<>), (<>>),
     -- ** Internals
     WrappedAQResult(..),
