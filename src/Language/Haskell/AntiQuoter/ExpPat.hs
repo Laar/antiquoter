@@ -7,7 +7,7 @@ module Language.Haskell.AntiQuoter.ExpPat (
     EP(..), EPAntiQuoter, EPAntiQuoterPass,
     mkEPQuasiQuoter,
     epPass, epPass', epPass'',
-    epResult, epValue,
+    epResult, epValue, epPure,
 
     -- ** Internal
     EPV(..),
@@ -76,6 +76,13 @@ epResult e p = unAQRW . fromEPV $ EPV (AQRW e) (AQRW p)
 -- | Make an context dependent value for expression and pattern contexts.
 epValue :: EP q => Q Exp -> Q Pat -> Q q
 epValue e p = fromEPV $ EPV e p
+
+newtype Identity a = Identity { runIdentity :: a }
+
+-- | Constructs an `EP` value by choosing from an `Exp` of `Pat` as
+-- appropriate in the context.
+epPure :: EP q => Exp -> Pat -> q
+epPure e p = runIdentity . fromEPV $ EPV (Identity e) (Identity p)
 
 instance EP Exp where
     var     = VarE
