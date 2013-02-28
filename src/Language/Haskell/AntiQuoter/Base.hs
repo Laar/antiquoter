@@ -9,6 +9,11 @@ module Language.Haskell.AntiQuoter.Base(
     mkQuasiQuoter,
     AQResult,
     fromPass, (<<>), (<>>),
+    -- ** Convenience reexport
+    -- | WARNING: when combining AntiQuoter(Pass)es using `extQ` only the
+    -- last (rightmost) pass will be used for any source type. The `<<>`
+    -- and `<>>` don't suffer from this problem.
+    extQ,
     -- ** Internals
     WrappedAQResult(..),
 ) where
