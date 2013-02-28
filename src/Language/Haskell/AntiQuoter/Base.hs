@@ -15,7 +15,6 @@ module Language.Haskell.AntiQuoter.Base(
 
 import Control.Monad
 import Data.Generics
-import Data.Monoid
 import Language.Haskell.TH
 import Language.Haskell.TH.Quote
 
