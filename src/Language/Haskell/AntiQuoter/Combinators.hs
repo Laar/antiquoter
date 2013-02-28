@@ -8,6 +8,7 @@ module Language.Haskell.AntiQuoter.Combinators(
     ignore, ignorePat, onlyExp, ignoreExp, onlyPat,
     -- * Unsorted
     splice, wild,
+    nonsenseE, nonsenseP,
 ) where
 
 import Language.Haskell.TH
@@ -63,3 +64,9 @@ ignoreExp, onlyPat :: EP q => AQResult Pat -> AQResult q
 ignoreExp = epResult ignore
 -- | Alias for `ignoreExp`.
 onlyPat = ignoreExp
+
+nonsenseP :: EP q => String -> AQResult Exp -> AQResult q
+nonsenseP msg e = e `epResult` error msg
+
+nonsenseE :: EP q => String -> AQResult Pat -> AQResult q
+nonsenseE msg p = error msg `epResult` p
