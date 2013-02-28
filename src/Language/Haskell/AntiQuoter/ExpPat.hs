@@ -49,7 +49,7 @@ mkEPQuasiQuoter :: Data a
     => (String -> Q a)
     -> EPAntiQuoter
     -> QuasiQuoter
-mkEPQuasiQuoter parse aq = mkQuasiQuoter parse (aq, aq)
+mkEPQuasiQuoter parse aq = mkQuasiQuoter parse aq aq
 
 -- | An `AntiQuoter` that works for `Exp` and `Pat`s.
 type EPAntiQuoter       = forall q. EP q => AntiQuoter q
