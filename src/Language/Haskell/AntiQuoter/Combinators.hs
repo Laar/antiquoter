@@ -66,7 +66,7 @@ ignoreExp = epResult ignore
 onlyPat = ignoreExp
 
 nonsenseP :: EP q => String -> AQResult Exp -> AQResult q
-nonsenseP msg e = e `epResult` error msg
+nonsenseP msg e = e `epResult` (Just $ fail msg)
 
 nonsenseE :: EP q => String -> AQResult Pat -> AQResult q
-nonsenseE msg p = error msg `epResult` p
+nonsenseE msg p = (Just $ fail msg) `epResult` p
