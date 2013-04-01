@@ -1,5 +1,32 @@
 -- | Tools for writing one `AntiQuoter` which can be used for both expressions
--- and patterns, thereby reducing copy-paste programming.
+-- and patterns, thereby reducing copy-and-paste programming.
+--
+-- For example in the original paper on quasi quoting <http://www.eecs.harvard.edu/~mainland/ghc-quasiquoting/mainland07quasiquoting.pdf>
+-- antiquoting is demonstrated by defining the following antiquoters:
+--
+-- @
+-- antiVarE :: Var -> Maybe ExpQ
+-- antiVarE (AV v ) = Just $ varE $ mkName v
+-- antiVarE _ = Nothing
+-- antiVarP :: Var -> Maybe PatQ
+-- antiVarP (AV v ) = Just $ varP $ mkName v
+-- antiVarP _ = Nothing
+-- @
+--
+-- and a simmilar pair for antiquoting variables. The problem is that the
+-- definition for the pattern antiquoter is almost a duplicate of the one for
+-- expressions. This similarity between antiquoting expressions and patterns
+-- is captured in the `EP` class which can be used to write antiquoters which
+-- can yield both expressions and patterns. Using the combinators defined on
+-- top of this class (see "Language.Haskell.AntiQuoter.Combinators") the
+-- example can be rewritten as
+--
+-- @
+-- antiVar :: EP q => Var ->  Maybe (Q q) -- equivalent to antiVar :: EPAntiQuoterPass Var
+-- antiVar (AV v) = Just $ varQ $ mkName v
+-- antiVar _      = Nothing
+-- @
+
 {-# LANGUAGE RankNTypes #-}
 module Language.Haskell.AntiQuoter.ExpPat (
 
@@ -27,7 +54,7 @@ data EPV f = EPV
     , pep :: f Pat
     }
 
--- | Typeclass with the common constructors of `Exp` and `Pat`, usefull for
+-- | Typeclass with the common constructors of `Exp` and `Pat`, useful for
 -- building `EPAntiQuoter`s.
 class EP q where
     -- | Variable

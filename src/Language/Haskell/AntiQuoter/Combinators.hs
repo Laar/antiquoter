@@ -8,7 +8,7 @@ module Language.Haskell.AntiQuoter.Combinators(
     ignore, ignorePat, onlyExp, ignoreExp, onlyPat,
     -- * Unsorted
     splice, wild,
-    nonsenseE, nonsenseP,
+    nonsenseP, nonsenseE,
 ) where
 
 import Language.Haskell.TH
@@ -30,6 +30,9 @@ tupQ  = fmap tup  . sequence
 listQ = fmap list . sequence
 
 -- | Uses/Binds a variable of the given name.
+--
+-- >  splice = varQ . mkName
+--
 splice :: EP q => String -> Q q
 splice =  varQ . mkName
 
@@ -65,8 +68,11 @@ ignoreExp = epResult ignore
 -- | Alias for `ignoreExp`.
 onlyPat = ignoreExp
 
+-- | A `fail`ing result for patterns, useful for when a the pattern matched by
+-- the using functions should never happen when antiquoting patterns.
 nonsenseP :: EP q => String -> AQResult Exp -> AQResult q
 nonsenseP msg e = e `epResult` (Just $ fail msg)
 
+-- | See `nonsenseP` but failing on expresions.
 nonsenseE :: EP q => String -> AQResult Pat -> AQResult q
 nonsenseE msg p = (Just $ fail msg) `epResult` p
