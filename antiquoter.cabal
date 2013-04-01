@@ -39,9 +39,9 @@ library
   other-modules:
   build-depends:
     base >=4 && <5,
-    -- could later be lowered
-    template-haskell >= 2.5,
-    -- bounds to be added
+    -- This seems to be the first version with Language.Haskell.TH.Quote.
+    template-haskell >= 2.3,
+    -- No apparent restrictions.
     syb
   hs-source-dirs: src
   ghc-options: -Wall
