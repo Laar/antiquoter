@@ -45,3 +45,7 @@ library
     syb
   hs-source-dirs: src
   ghc-options: -Wall
+
+source-repository head
+    type:       git
+    location:   https://github.com/Laar/antiquoter
