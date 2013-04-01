@@ -1,4 +1,4 @@
-# Antiquoted
+# Antiquoter
 
 A combinator library making quasi/anti-quoting simpler. The problem with
 writing antiquoters is that you have to write simmilar code for expression and
