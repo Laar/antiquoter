@@ -75,6 +75,10 @@ lExp = QuasiQuoter
         antiP :: AntiQuoter Pat
         antiP = antiExprP \<>> antiVarP \<>> const Nothing
 @
+
+Two little improvements could be made, @const Nothing@ could be replaced by
+`noAntiQuoter` and the building of the `QuasiQuoter` could be simplified by
+using `mkQuasiQuoter`
 -}
 module Language.Haskell.AntiQuoter.Base(
     -- * AntiQuoters
