@@ -83,6 +83,7 @@ module Language.Haskell.AntiQuoter.Base(
     AQResult,
     -- ** Using AntiQuoters
     mkQuasiQuoter,
+    noAntiQuoter,
     fromPass, (<<>), (<>>), (<<>>),
     -- ** Convenience reexport
     -- | WARNING: when combining AntiQuoter(Pass)es using `extQ` only the
@@ -130,6 +131,13 @@ type AntiQuoter q = forall e. Typeable e => AntiQuoterPass e q
 -- | Create an `AntiQuoter` from an single pass.
 fromPass :: Typeable e => AntiQuoterPass e q -> AntiQuoter q
 fromPass aqp = mkQ Nothing aqp
+
+-- | An `AnitQuoter` that does no antiquoting by only return Nothing,
+--
+-- > noAntiQuoter = const Nothing
+--
+noAntiQuoter :: AntiQuoter q
+noAntiQuoter = const Nothing
 
 -- | Create an `AntiQuoter` by combining an `AntiQuoter` and an
 -- `AntiQuoterPass`. This is left biased, see (`<<>>`).
