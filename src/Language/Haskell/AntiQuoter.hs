@@ -1,3 +1,5 @@
+{- | Simple reexport of all modules hiding the exports marked as internal.
+-}
 module Language.Haskell.AntiQuoter (
 
     module Language.Haskell.AntiQuoter.Base,
