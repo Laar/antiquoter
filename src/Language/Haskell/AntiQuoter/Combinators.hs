@@ -1,5 +1,5 @@
 {-# LANGUAGE RankNTypes #-}
--- | Several combinators for `AntiQuoters`.
+-- | Several combinators for `AntiQuoters`, mainly `EP` related.
 module Language.Haskell.AntiQuoter.Combinators(
     -- * Lifted constructors.
     varQ, conQ, litQ, tupQ, listQ,
