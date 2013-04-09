@@ -106,10 +106,15 @@ infixr 2 <>>
 -- `Exp`). A @Just result@ indicates that the input should be antiquoted into
 -- @result@ while @Nothing@ indicates that there is no special antiquotation.
 type AntiQuoterPass e q = e -> Maybe (Q q)
+-- Note, `AQResult` is not used as that would lead to too unclear code and
+-- documentation.
 
-
--- | Result of an `AntiQuoterPass` (AntiQuoterPass e q = e -> AQResult q), see
--- `AntiQuoterPass` on what Nothing and Just mean.
+-- | Result of an `AntiQuoterPass` (AntiQuoterPass e q = e -> AQResult q).
+-- This type-alias is mostly used for combinators which only provides the
+-- result of the antiquotation and the usecase (thus the pattern to match)
+-- should be filled in by the user.
+--
+-- See `AntiQuoterPass` on what @Nothing@ and @Just@ mean.
 type AQResult q = Maybe (Q q)
 
 -- | Wrapper for `AQResult`, needed for the typechecker.
