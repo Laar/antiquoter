@@ -88,8 +88,9 @@ mkEPQuasiQuoter :: Data a
     -> QuasiQuoter
 mkEPQuasiQuoter parse aq = mkQuasiQuoter parse aq aq
 
--- | An `AntiQuoter` that works for `Exp` and `Pat`s.
+-- | An `AntiQuoter` that works for `Exp` and `Pat` results.
 type EPAntiQuoter       = forall q. EP q => AntiQuoter q
+-- | An `AntiQuoterPass` that works for `Exp` and `Pat` results.
 type EPAntiQuoterPass e = forall q. EP q => AntiQuoterPass e q
 
 -- | Combine two `AntiQuoterPass`es, one for expression context and another for
