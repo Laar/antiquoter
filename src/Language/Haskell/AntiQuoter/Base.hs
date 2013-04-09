@@ -77,12 +77,11 @@ module Language.Haskell.AntiQuoter.Base(
     AntiQuoterPass,
     AntiQuoter,
     AQResult,
-    -- * Combining AntiQuoters
+    -- ** Using AntiQuoters
     mkQuasiQuoter,
     fromPass, (<<>), (<>>),
     -- ** Convenience reexport
     -- | WARNING: when combining AntiQuoter(Pass)es using `extQ` only the
-    -- WARNING: when combining AntiQuoter(Pass)es using `extQ` only the
     -- last (rightmost) pass will be used for any source type. The `<<>`
     -- and `<>>` don't suffer from this problem.
     extQ,
@@ -113,25 +112,32 @@ type AQResult q = Maybe (Q q)
 newtype WrappedAQResult q = AQRW { unAQRW :: AQResult q }
 
 
--- | An `AntiQuoter` is the combination of several `AntiQuoterPass`es, trying
--- each of them in order until one passes.
+-- | An `AntiQuoter` is the combination of several `AntiQuoterPass`es, which
+-- could have different source types. In the example the
+-- @AntiQuoterPass Expr Exp@ and @AntiQuoterPass Var Exp@ were combined into
+-- a single @AntiQuoter Exp@, which antiquoted both @Expr@ and @Pat@.
 type AntiQuoter q = forall e. Typeable e => AntiQuoterPass e q
 
 -- | Create an `AntiQuoter` from an single pass.
 fromPass :: Typeable e => AntiQuoterPass e q -> AntiQuoter q
 fromPass aqp = mkQ Nothing aqp
 
--- | Combine an existing `AntiQuoter` with an extra pass, where the extra pass
--- is tried if the current quoter fails.
+-- | Create an `AntiQuoter` by combining an `AntiQuoter` and an
+-- `AntiQuoterPass`. This is left biased, thus @(quoter \<<> pass) s@ first
+-- tries to antiquote @s@ using @quoter@, if the result is @Noting@ (no
+-- transformation) then it tries @pass@ (assuming @s@ is of the right type).
 (<<>) :: Typeable e => AntiQuoter q -> AntiQuoterPass e q -> AntiQuoter q
 aq <<> aqp = \e -> aq e `mplus` fromPass aqp e
--- | Like `<>>` with flipped arguments, but also trying the extra pass before
--- the quoter.
+-- | Create an `AntiQuoter` by combining an `AntiQuoterPass` and an
+-- `AntiQuoter`. This is left biased, thus @(pass \<>> quoter) s@  first tries
+-- to antiquote @s@ using @pass@ (assuming @s@ has the right type) and when
+-- it does not (a @Nothing@ result) it tries @quoter@.
 (<>>) :: Typeable e => AntiQuoterPass e q -> AntiQuoter q -> AntiQuoter q
 aqp <>> aq = \e -> fromPass aqp e `mplus` aq e
 
 -- | Create an QuasiQuoter for expressions and patterns from a parser and two
--- antiquoters.
+-- antiquoters. The quasiquoter from the example could also have been
+-- constructed by using @mkQuasiQuoter (return . parse) antiE antiP @
 mkQuasiQuoter :: Data a
     => (String -> Q a)
     -> AntiQuoter Exp
