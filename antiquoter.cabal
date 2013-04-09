@@ -2,16 +2,18 @@ name:           antiquoter
 version:        0.1.0.0
 synopsis:       Combinator library for quasi- and anti-quoting.
 description:    A combinator library to improve the building of anti-quoters.
-                Especially aimed at making user extensible antiquoters and
-                removing copy-and-paste programming from their definition.
+                Especially aimed at removing copy-and-paste programming from
+                their definition. Other antiquoting related features could be
+                included in the future.
                 .
                 The modules are
                 .
-                * "Language.Haskell.AntiQuoter.Base" basic type aliases for
-                  building antiquoters.
+                * "Language.Haskell.AntiQuoter.Base" basic types for building
+                   antiquoters. It also contains the most detailed example of
+                   the basic usage.
                 .
                 * "Language.Haskell.AntiQuoter.ExpPat" making antiquoters which
-                  can result in expressions as well as patters. Therefore only
+                  can antiquote both expressions and patters. Therefore only
                   one antiquoter has to be defined in stead of two.
                 .
                 * "Language.Haskell.AntiQuoter.Combinators" more useful

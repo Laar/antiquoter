@@ -1,38 +1,48 @@
--- | Tools for writing one `AntiQuoter` which can be used for both expressions
--- and patterns, thereby reducing copy-and-paste programming.
---
--- For example in the original paper on quasi quoting <http://www.eecs.harvard.edu/~mainland/ghc-quasiquoting/mainland07quasiquoting.pdf>
--- antiquoting is demonstrated by defining the following antiquoters:
---
--- @
--- antiVarE :: Var -> Maybe ExpQ
--- antiVarE (AV v ) = Just $ varE $ mkName v
--- antiVarE _ = Nothing
--- antiVarP :: Var -> Maybe PatQ
--- antiVarP (AV v ) = Just $ varP $ mkName v
--- antiVarP _ = Nothing
--- @
---
--- and a simmilar pair for antiquoting variables. The problem is that the
--- definition for the pattern antiquoter is almost a duplicate of the one for
--- expressions. This similarity between antiquoting expressions and patterns
--- is captured in the `EP` class which can be used to write antiquoters which
--- can yield both expressions and patterns. Using the combinators defined on
--- top of this class (see "Language.Haskell.AntiQuoter.Combinators") the
--- example can be rewritten as
---
--- @
--- antiVar :: EP q => Var ->  Maybe (Q q) -- equivalent to antiVar :: EPAntiQuoterPass Var
--- antiVar (AV v) = Just $ varQ $ mkName v
--- antiVar _      = Nothing
--- @
-
 {-# LANGUAGE RankNTypes #-}
+{- | `Exp` and `Pat` are for most part used in simmilar fashion. Most
+AntiQuoter(Pass)es have to be written for both datatypes and their
+implementation is more or less identical in structure. To reduce copy-and-paste
+programming it would be best if it would only need one AntiQuoter(Pass) that
+works on both `Exp` and `Pat`.
+
+This module defines the `EP` typeclass expressing the similarity between `Exp`
+and `Pat` and some basic functions to use them with `AntiQuoterPass`es. The
+"Language.Haskell.AntiQuoter.Combinators" defines the combinator functions on
+top of these functions, which are probably more suitable for users.
+
+
+As an example of the problem take the antiquoters in
+"Language.Haskell.AntiQuoter.Base" where there are two AntiQuoterPasses for
+each source type, for Var they are
+
+@
+antiVarE :: AntiQuoterPass Var Exp
+antiVarE (AV v ) = Just $ varE $ mkName v
+antiVarE _ = Nothing
+antiVarP :: AntiQuoterPass Var Pat
+antiVarP (AV v ) = Just $ varP $ mkName v
+antiVarP _ = Nothing
+@
+
+The problem is that the definition for the pattern antiquoter is almost a
+duplicate of the one for expressions. This similarity between antiquoting
+expressions and patterns is captured in the `EP` class which can be used to
+write antiquoters which an yield both expressions and patterns. Using the
+combinators defined on top of this class (see
+"Language.Haskell.AntiQuoter.Combinators") the example can be rewritten as
+
+@
+antiVar :: EP q => AntiQuoterPass Var q -- equivalent to antiVar :: EPAntiQuoterPass Var
+antiVar (AV v) = Just $ varQ $ mkName v
+antiVar _      = Nothing
+@
+-}
 module Language.Haskell.AntiQuoter.ExpPat (
 
     -- * Template syntax class
     EP(..), EPAntiQuoter, EPAntiQuoterPass,
     mkEPQuasiQuoter,
+    -- ** Low level functions used when the result for `Exp` and `Pat` differs.
     epPass, epPass', epPass'',
     epResult, epValue, epPure,
 
@@ -83,7 +93,7 @@ type EPAntiQuoter       = forall q. EP q => AntiQuoter q
 type EPAntiQuoterPass e = forall q. EP q => AntiQuoterPass e q
 
 -- | Combine two `AntiQuoterPass`es, one for expression context and another for
--- pattern context, into a single pass for an expression of patter context.
+-- pattern context, into a single pass which can be used in both contexts.
 epPass :: Typeable e => AntiQuoterPass e Exp -> AntiQuoterPass e Pat
     -> EPAntiQuoterPass e
 epPass pe pp = \e -> epResult (pe e) (pp e)
