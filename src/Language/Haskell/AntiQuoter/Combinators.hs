@@ -16,17 +16,22 @@ import Language.Haskell.TH
 import Language.Haskell.AntiQuoter.Base
 import Language.Haskell.AntiQuoter.ExpPat
 
+-- | Generalized `varE`/`varP`.
 varQ :: EP q => Name -> Q q
 varQ = return . var
 
+-- | Generalized `conP` or combination of `conE` and `appE`.
 conQ :: EP q => Name -> [Q q] -> Q q
 conQ n = fmap (con n) . sequence
 
+-- | Generalized `litE`/`litP`.
 litQ :: EP q => Lit -> Q q
 litQ = return . lit
 
 tupQ, listQ :: EP q => [Q q] -> Q q
+-- | Generalized `tupE`/`tupP`.
 tupQ  = fmap tup  . sequence
+-- | Generalized `listE`/`listP`.
 listQ = fmap list . sequence
 
 -- | Uses/Binds a variable of the given name.
