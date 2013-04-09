@@ -48,8 +48,12 @@ antiVarE :: AntiQuoterPass Var Exp
 antiVarE (AntiVar s) = Just . varE $ mkName s
 antiVarE _           = Nothing
 
-antiExprP :: AntiQuoterPass Expr Pat -- implementation simmilar to antiExprE
-antiVarP  :: AntiQuoterPass Var  Pat -- implementation simmilar to antiVarE
+antiExprP :: AntiQuoterPass Expr Pat
+antiExprP (AntiExpr s) = Just . varP $ mkName s
+antiExprP _            = Nothing
+antiVarP :: AntiQuoterPass Var Pat
+antiVarP (AntiVar s) = Just . varP $ mkName s
+antiVarP _           = Nothing
 @
 
 Both rules should be used when antiquoting as an exception to the base case
