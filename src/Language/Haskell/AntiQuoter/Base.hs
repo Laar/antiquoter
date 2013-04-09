@@ -83,7 +83,7 @@ module Language.Haskell.AntiQuoter.Base(
     AQResult,
     -- ** Using AntiQuoters
     mkQuasiQuoter,
-    fromPass, (<<>), (<>>),
+    fromPass, (<<>), (<>>), (<<>>),
     -- ** Convenience reexport
     -- | WARNING: when combining AntiQuoter(Pass)es using `extQ` only the
     -- last (rightmost) pass will be used for any source type. The `<<>`
@@ -98,7 +98,7 @@ import Data.Generics
 import Language.Haskell.TH
 import Language.Haskell.TH.Quote
 
-infixl 1 <<>
+infixl 1 <<>,<<>>
 infixr 2 <>>
 
 -- | A single antiquotation for a specific source type. Usually @e@ is a type
@@ -132,17 +132,19 @@ fromPass :: Typeable e => AntiQuoterPass e q -> AntiQuoter q
 fromPass aqp = mkQ Nothing aqp
 
 -- | Create an `AntiQuoter` by combining an `AntiQuoter` and an
--- `AntiQuoterPass`. This is left biased, thus @(quoter \<<> pass) s@ first
--- tries to antiquote @s@ using @quoter@, if the result is @Noting@ (no
--- transformation) then it tries @pass@ (assuming @s@ is of the right type).
+-- `AntiQuoterPass`. This is left biased, see (`<<>>`).
 (<<>) :: Typeable e => AntiQuoter q -> AntiQuoterPass e q -> AntiQuoter q
-aq <<> aqp = \e -> aq e `mplus` fromPass aqp e
+aq <<> aqp = aq <<>> fromPass aqp
 -- | Create an `AntiQuoter` by combining an `AntiQuoterPass` and an
--- `AntiQuoter`. This is left biased, thus @(pass \<>> quoter) s@  first tries
--- to antiquote @s@ using @pass@ (assuming @s@ has the right type) and when
--- it does not (a @Nothing@ result) it tries @quoter@.
+-- `AntiQuoter`. This is left biased, see (`<<>>`).
 (<>>) :: Typeable e => AntiQuoterPass e q -> AntiQuoter q -> AntiQuoter q
-aqp <>> aq = \e -> fromPass aqp e `mplus` aq e
+aqp <>> aq = fromPass aqp <<>> aq
+
+-- | Combines two `AntiQuoter`s with the same result. It is left biased, thus
+-- if the first antiquoter returns @Just result@ that is used, otherwise the
+-- second AntiQuoter is tried.
+(<<>>) :: AntiQuoter q -> AntiQuoter q -> AntiQuoter q
+aq1 <<>> aq2 = \e -> aq1 e `mplus` aq2 e
 
 -- | Create an QuasiQuoter for expressions and patterns from a parser and two
 -- antiquoters. The quasiquoter from the example could also have been
