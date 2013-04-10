@@ -87,8 +87,9 @@ module Language.Haskell.AntiQuoter.Base(
     AQResult,
     -- ** Using AntiQuoters
     mkQuasiQuoter,
-    noAntiQuoter,
-    fromPass, (<<>), (<>>), (<<>>),
+    fromPass,
+    noAntiQuoter, (<<>>),
+    (<<>), (<>>),
     -- ** Convenience reexport
     -- | WARNING: when combining AntiQuoter(Pass)es using `extQ` only the
     -- last (rightmost) pass will be used for any source type. The `<<>`
@@ -155,6 +156,8 @@ aqp <>> aq = fromPass aqp <<>> aq
 -- | Combines two `AntiQuoter`s with the same result. It is left biased, thus
 -- if the first antiquoter returns @Just result@ that is used, otherwise the
 -- second AntiQuoter is tried.
+-- Together with `noAntiQuoter` this forms a monoid, but as AntiQuoter is a
+-- type synonyme no instance is declared.
 (<<>>) :: AntiQuoter q -> AntiQuoter q -> AntiQuoter q
 aq1 <<>> aq2 = \e -> aq1 e `mplus` aq2 e
 
