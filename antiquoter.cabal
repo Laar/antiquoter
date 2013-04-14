@@ -1,5 +1,5 @@
 name:           antiquoter
-version:        0.1.0.0
+version:        0.1.1.0
 synopsis:       Combinator library for quasi- and anti-quoting.
 description:    A combinator library to improve the building of anti-quoters.
                 Especially aimed at removing copy-and-paste programming from
