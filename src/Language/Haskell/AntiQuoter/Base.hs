@@ -78,7 +78,7 @@ lExp = QuasiQuoter
 
 Two little improvements could be made, @const Nothing@ could be replaced by
 `noAntiQuoter` and the building of the `QuasiQuoter` could be simplified by
-using `mkQuasiQuoter`
+using `mkQuasiQuoter`.
 -}
 module Language.Haskell.AntiQuoter.Base(
     -- * AntiQuoters
@@ -163,7 +163,7 @@ aq1 <<>> aq2 = \e -> aq1 e `mplus` aq2 e
 
 -- | Create an QuasiQuoter for expressions and patterns from a parser and two
 -- antiquoters. The quasiquoter from the example could also have been
--- constructed by using @mkQuasiQuoter (return . parse) antiE antiP @
+-- constructed by using @mkQuasiQuoter (return . parse) antiE antiP @.
 mkQuasiQuoter :: Data a
     => (String -> Q a)
     -> AntiQuoter Exp
